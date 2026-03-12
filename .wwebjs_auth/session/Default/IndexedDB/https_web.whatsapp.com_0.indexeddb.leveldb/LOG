@@ -1,0 +1,16 @@
+2026/03/13-00:26:16.260 543ed Reusing MANIFEST /Volumes/Crucial X9/Projects/COMPETITION/TeenTitansGo_TechBlitz26/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/03/13-00:26:16.260 543ed Recovering log #63
+2026/03/13-00:26:16.260 543ed Reusing old log /Volumes/Crucial X9/Projects/COMPETITION/TeenTitansGo_TechBlitz26/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000063.log 
+2026/03/13-00:26:16.261 543ed Delete type=2 #62
+2026/03/13-00:26:16.261 543ed Delete type=2 #53
+2026/03/13-00:26:16.629 543eb Level-0 table #69: started
+2026/03/13-00:26:16.631 543eb Level-0 table #69: 8953 bytes OK
+2026/03/13-00:26:16.632 543eb Delete type=0 #63
+2026/03/13-00:26:16.633 543eb Manual compaction at level-0 from '\x00&\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00'\x00\x00\x00' @ 0 : 0; will stop at (end)
+2026/03/13-00:26:16.633 543eb Manual compaction at level-1 from '\x00&\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00'\x00\x00\x00' @ 0 : 0; will stop at '\x00&\x0a\x02\x03\x00\x00\x00\x00\x00\x00\xf0?' @ 50456 : 1
+2026/03/13-00:26:16.633 543eb Compacting 1@1 + 1@2 files
+2026/03/13-00:26:16.634 543eb Generated table #70@1: 27 keys, 665 bytes
+2026/03/13-00:26:16.635 543eb Compacted 1@1 + 1@2 files => 665 bytes
+2026/03/13-00:26:16.636 543eb compacted to: files[ 0 0 1 0 0 0 0 ]
+2026/03/13-00:26:16.636 543eb Delete type=2 #69
+2026/03/13-00:26:16.637 543eb Manual compaction at level-1 from '\x00&\x0a\x02\x03\x00\x00\x00\x00\x00\x00\xf0?' @ 50456 : 1 .. '\x00'\x00\x00\x00' @ 0 : 0; will stop at (end)
