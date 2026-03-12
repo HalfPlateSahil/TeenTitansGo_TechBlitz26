@@ -61,7 +61,7 @@ export class LeadService {
     private readonly whatsappGateway: WhatsappGateway,
     private readonly emailGateway: EmailGateway,
     private readonly followUpScheduler: FollowUpScheduler
-  ) {}
+  ) { }
 
   async ingest(payload: LeadWebhookPayload, fallbackSource?: string): Promise<LeadIngestionResult> {
     const normalizedLead = normalizeLeadPayload(payload, fallbackSource);
@@ -175,28 +175,47 @@ export class LeadService {
       };
     }
 
-    await this.whatsappGateway.sendApprovalRequest(lead);
-    lead = await this.repository.update(lead.id, {
-      whatsappNotifiedAt: new Date().toISOString()
-    });
+    let notified = false;
+    try {
+      await this.whatsappGateway.sendApprovalRequest(lead);
+      lead = await this.repository.update(lead.id, {
+        whatsappNotifiedAt: new Date().toISOString()
+      });
 
-    await this.repository.addEvent({
-      leadId: lead.id,
-      eventType: "approval_requested",
-      actor: "system",
-      payload: {
-        ownerWhatsappNumber: env.ownerWhatsappNumber
-      }
-    });
+      await this.repository.addEvent({
+        leadId: lead.id,
+        eventType: "approval_requested",
+        actor: "system",
+        payload: {
+          ownerWhatsappNumber: env.ownerWhatsappNumber
+        }
+      });
 
-    logger.info({ leadId: lead.id, source: lead.source }, "Lead ingested");
+      notified = true;
+    } catch (whatsappError: unknown) {
+      logger.warn(
+        { leadId: lead.id, err: whatsappError },
+        "WhatsApp notification failed; lead was saved and can be approved via the API"
+      );
+
+      await this.repository.addEvent({
+        leadId: lead.id,
+        eventType: "whatsapp_notification_failed",
+        actor: "system",
+        payload: {
+          error: whatsappError instanceof Error ? whatsappError.message : String(whatsappError)
+        }
+      });
+    }
+
+    logger.info({ leadId: lead.id, source: lead.source, notified }, "Lead ingested");
 
     return {
       lead,
       duplicate: false,
       duplicateMatch: strongestMatch,
       archived: false,
-      notified: true
+      notified
     };
   }
 

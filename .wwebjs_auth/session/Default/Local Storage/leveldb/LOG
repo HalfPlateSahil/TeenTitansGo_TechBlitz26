@@ -1,3 +1,2 @@
-2026/03/13-00:26:15.761 5442f Reusing MANIFEST /Volumes/Crucial X9/Projects/COMPETITION/TeenTitansGo_TechBlitz26/.wwebjs_auth/session/Default/Local Storage/leveldb/MANIFEST-000001
-2026/03/13-00:26:15.763 5442f Recovering log #3
-2026/03/13-00:26:15.763 5442f Reusing old log /Volumes/Crucial X9/Projects/COMPETITION/TeenTitansGo_TechBlitz26/.wwebjs_auth/session/Default/Local Storage/leveldb/000003.log 
+2026/03/13-01:21:49.558 67485 Creating DB /Volumes/Crucial X9/Projects/COMPETITION/TeenTitansGo_TechBlitz26/.wwebjs_auth/session/Default/Local Storage/leveldb since it was missing.
+2026/03/13-01:21:49.568 67485 Reusing MANIFEST /Volumes/Crucial X9/Projects/COMPETITION/TeenTitansGo_TechBlitz26/.wwebjs_auth/session/Default/Local Storage/leveldb/MANIFEST-000001

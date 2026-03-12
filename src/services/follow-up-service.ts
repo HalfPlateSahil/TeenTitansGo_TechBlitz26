@@ -7,15 +7,20 @@ import type { FollowUpJobData, FollowUpScheduler } from "../types/pipeline.js";
 const FOLLOW_UP_QUEUE_NAME = "lead-follow-ups";
 
 function buildRedisConnection() {
-  const connectionUrl = new URL(env.upstashRedisUrl!);
+  // Upstash provides https:// URLs, but ioredis/BullMQ needs rediss:// for TLS.
+  const rawUrl = env.upstashRedisUrl!.replace(/^https:\/\//, "rediss://").replace(/^http:\/\//, "redis://");
+  const connectionUrl = new URL(rawUrl);
+  const isUpstash = connectionUrl.hostname.includes("upstash.io");
   const password = env.upstashRedisToken || connectionUrl.password || undefined;
+  const useTls = connectionUrl.protocol === "rediss:" || isUpstash;
 
   return {
     host: connectionUrl.hostname,
-    port: Number(connectionUrl.port || 6379),
-    username: connectionUrl.username || undefined,
+    port: Number(connectionUrl.port || (useTls ? 6379 : 6379)),
+    username: connectionUrl.username || (isUpstash ? "default" : undefined),
     password,
-    tls: connectionUrl.protocol === "rediss:" ? {} : undefined
+    tls: useTls ? {} : undefined,
+    maxRetriesPerRequest: null
   };
 }
 
