@@ -2,7 +2,7 @@ import { env } from "../config/env.js";
 import { logger } from "../lib/logger.js";
 import type { LeadRepository } from "../repositories/lead-repository.js";
 import type { LeadCommandResult, LeadIngestionResult, LeadRecord, NormalizedLeadInput } from "../types/lead.js";
-import type { EmailGateway, FollowUpJobData, FollowUpScheduler, LeadAiClient, WhatsappGateway } from "../types/pipeline.js";
+import type { CallGateway, EmailGateway, FollowUpJobData, FollowUpScheduler, LeadAiClient, WhatsappGateway } from "../types/pipeline.js";
 import type { LeadWebhookPayload } from "../types/webhook.js";
 import { scoreDuplicateLead } from "../utils/fuzzy.js";
 import { createId } from "../utils/ids.js";
@@ -33,6 +33,7 @@ function buildLeadRecord(payload: NormalizedLeadInput, duplicateOfLeadId: string
     qualityScore: null,
     aiSummary: null,
     whatsappNotifiedAt: null,
+    whatsappResponseSentAt: null,
     initialEmailSentAt: null,
     followUp1SentAt: null,
     followUp2SentAt: null,
@@ -62,7 +63,8 @@ export class LeadService {
     private readonly aiClient: LeadAiClient,
     private readonly whatsappGateway: WhatsappGateway,
     private readonly emailGateway: EmailGateway,
-    private readonly followUpScheduler: FollowUpScheduler
+    private readonly followUpScheduler: FollowUpScheduler,
+    private readonly callGateway?: CallGateway
   ) { }
 
   async ingest(payload: LeadWebhookPayload, fallbackSource?: string): Promise<LeadIngestionResult> {
@@ -324,6 +326,73 @@ export class LeadService {
         delayHours: env.followUpDelayHours
       }
     });
+
+    // Send AI-generated WhatsApp response to the lead
+    if (approvedLead.phone || approvedLead.normalizedPhone) {
+      try {
+        const whatsappMessage = await this.aiClient.draftWhatsappResponse(approvedLead);
+        await this.whatsappGateway.sendLeadResponse(approvedLead, whatsappMessage);
+        approvedLead = await this.repository.update(approvedLead.id, {
+          whatsappResponseSentAt: new Date().toISOString()
+        });
+
+        await this.repository.addEvent({
+          leadId: approvedLead.id,
+          eventType: "whatsapp_response_sent",
+          actor: "system",
+          payload: {
+            phone: approvedLead.normalizedPhone ?? approvedLead.phone,
+            messageSummary: whatsappMessage.slice(0, 120)
+          }
+        });
+      } catch (whatsappResponseError: unknown) {
+        logger.warn(
+          { leadId: approvedLead.id, err: whatsappResponseError },
+          "WhatsApp response to lead failed; lead was approved and email was sent"
+        );
+
+        await this.repository.addEvent({
+          leadId: approvedLead.id,
+          eventType: "whatsapp_response_failed",
+          actor: "system",
+          payload: {
+            error: whatsappResponseError instanceof Error ? whatsappResponseError.message : String(whatsappResponseError)
+          }
+        });
+      }
+    }
+
+    // Trigger automated outbound call if lead has a phone number
+    if ((approvedLead.phone || approvedLead.normalizedPhone) && this.callGateway) {
+      try {
+        const callResult = await this.callGateway.initiateCall(approvedLead);
+
+        await this.repository.addEvent({
+          leadId: approvedLead.id,
+          eventType: "outbound_call_initiated",
+          actor: "system",
+          payload: {
+            callSid: callResult.callSid,
+            callLogId: callResult.callLogId,
+            phone: approvedLead.normalizedPhone ?? approvedLead.phone
+          }
+        });
+      } catch (callError: unknown) {
+        logger.warn(
+          { leadId: approvedLead.id, err: callError },
+          "Automated outbound call failed; lead was approved and email was sent"
+        );
+
+        await this.repository.addEvent({
+          leadId: approvedLead.id,
+          eventType: "outbound_call_failed",
+          actor: "system",
+          payload: {
+            error: callError instanceof Error ? callError.message : String(callError)
+          }
+        });
+      }
+    }
 
     return {
       handled: true,

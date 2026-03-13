@@ -25,6 +25,7 @@ interface LeadRow {
   quality_score: number | null;
   ai_summary: string | null;
   whatsapp_notified_at: string | null;
+  whatsapp_response_sent_at: string | null;
   initial_email_sent_at: string | null;
   follow_up_1_sent_at: string | null;
   follow_up_2_sent_at: string | null;
@@ -62,6 +63,7 @@ function mapLeadRow(row: LeadRow): LeadRecord {
     qualityScore: row.quality_score,
     aiSummary: row.ai_summary,
     whatsappNotifiedAt: row.whatsapp_notified_at,
+    whatsappResponseSentAt: row.whatsapp_response_sent_at,
     initialEmailSentAt: row.initial_email_sent_at,
     followUp1SentAt: row.follow_up_1_sent_at,
     followUp2SentAt: row.follow_up_2_sent_at,
@@ -91,6 +93,7 @@ function toLeadInsert(lead: LeadRecord): LeadRow {
     quality_score: lead.qualityScore,
     ai_summary: lead.aiSummary,
     whatsapp_notified_at: lead.whatsappNotifiedAt,
+    whatsapp_response_sent_at: lead.whatsappResponseSentAt,
     initial_email_sent_at: lead.initialEmailSentAt,
     follow_up_1_sent_at: lead.followUp1SentAt,
     follow_up_2_sent_at: lead.followUp2SentAt,
@@ -110,6 +113,7 @@ function toLeadPatch(patch: LeadRecordPatch): Partial<LeadRow> {
     ...(patch.qualityScore === undefined ? {} : { quality_score: patch.qualityScore }),
     ...(patch.aiSummary === undefined ? {} : { ai_summary: patch.aiSummary }),
     ...(patch.whatsappNotifiedAt === undefined ? {} : { whatsapp_notified_at: patch.whatsappNotifiedAt }),
+    ...(patch.whatsappResponseSentAt === undefined ? {} : { whatsapp_response_sent_at: patch.whatsappResponseSentAt }),
     ...(patch.initialEmailSentAt === undefined ? {} : { initial_email_sent_at: patch.initialEmailSentAt }),
     ...(patch.followUp1SentAt === undefined ? {} : { follow_up_1_sent_at: patch.followUp1SentAt }),
     ...(patch.followUp2SentAt === undefined ? {} : { follow_up_2_sent_at: patch.followUp2SentAt }),

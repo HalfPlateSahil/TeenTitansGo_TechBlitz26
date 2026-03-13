@@ -92,11 +92,32 @@ export class WhatsAppWebGateway implements WhatsappGateway {
 
     await this.client.sendMessage(buildOwnerJid(), formatApprovalMessage(lead));
   }
+
+  async sendLeadResponse(lead: LeadRecord, message: string): Promise<void> {
+    if (!this.ready) {
+      throw new Error("WhatsApp client is not ready. Authenticate the session before sending messages.");
+    }
+
+    const phone = lead.normalizedPhone ?? lead.phone;
+    if (!phone) {
+      throw new Error(`Lead ${lead.id} does not have a phone number for WhatsApp messaging.`);
+    }
+
+    const jid = `${normalizeWhatsappAddress(phone)}@c.us`;
+    await this.client.sendMessage(jid, message);
+  }
 }
 
 export class LoggingWhatsappGateway implements WhatsappGateway {
   async sendApprovalRequest(lead: LeadRecord): Promise<void> {
     logger.warn({ leadId: lead.id, message: formatApprovalMessage(lead) }, "WhatsApp is not configured; approval request logged instead of sent");
+  }
+
+  async sendLeadResponse(lead: LeadRecord, message: string): Promise<void> {
+    logger.warn(
+      { leadId: lead.id, phone: lead.normalizedPhone ?? lead.phone, message },
+      "WhatsApp is not configured; lead response logged instead of sent"
+    );
   }
 
   async start(): Promise<void> {

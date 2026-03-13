@@ -42,13 +42,22 @@ class StubAiClient implements LeadAiClient {
       text: `Hi ${input.lead.name}, thanks for reaching out.`
     };
   }
+
+  async draftWhatsappResponse(lead: Parameters<LeadAiClient["enrichAndScore"]>[0]): Promise<string> {
+    return `Hi ${lead.name}! Thanks for reaching out.`;
+  }
 }
 
 class StubWhatsappGateway implements WhatsappGateway {
   readonly sentMessages: string[] = [];
+  readonly sentLeadResponses: Array<{ leadId: string; message: string }> = [];
 
   async sendApprovalRequest(lead: Parameters<WhatsappGateway["sendApprovalRequest"]>[0]): Promise<void> {
     this.sentMessages.push(lead.id);
+  }
+
+  async sendLeadResponse(lead: Parameters<WhatsappGateway["sendApprovalRequest"]>[0], message: string): Promise<void> {
+    this.sentLeadResponses.push({ leadId: lead.id, message });
   }
 }
 
@@ -84,7 +93,7 @@ function buildApp(options?: {
     whatsappGateway,
     emailGateway,
     followUpScheduler,
-    app: createApp(leadService)
+    app: createApp(leadService, repository)
   };
 }
 
@@ -203,5 +212,50 @@ describe("POST /api/whatsapp/messages", () => {
       leadId: created.body.lead.id,
       step: 1
     });
+  });
+});
+
+describe("WhatsApp response on lead approval", () => {
+  it("sends a WhatsApp response to the lead when approved with a phone number", async () => {
+    const repository = new InMemoryLeadRepository();
+    const whatsappGateway = new StubWhatsappGateway();
+    const emailGateway = new StubEmailGateway();
+    const followUpScheduler = new InMemoryFollowUpScheduler();
+    const { app } = buildApp({
+      repository,
+      aiClient: new StubAiClient(82),
+      whatsappGateway,
+      emailGateway,
+      followUpScheduler
+    });
+
+    const created = await request(app)
+      .post("/api/webhooks/leads")
+      .send({
+        name: "Starfire",
+        email: "starfire@titans.com",
+        phone: "+1-555-867-5309",
+        message: "Need help automating our inbound sales follow-ups"
+      });
+
+    expect(created.status).toBe(201);
+
+    const approval = await request(app)
+      .post("/api/whatsapp/messages")
+      .send({ body: "1" });
+
+    expect(approval.status).toBe(200);
+    expect(approval.body.handled).toBe(true);
+    expect(approval.body.action).toBe("approved");
+
+    // WhatsApp response should have been sent to the lead
+    expect(whatsappGateway.sentLeadResponses).toHaveLength(1);
+    expect(whatsappGateway.sentLeadResponses[0].leadId).toBe(created.body.lead.id);
+    expect(whatsappGateway.sentLeadResponses[0].message).toContain("Starfire");
+
+    // Verify the event was logged
+    const events = await repository.findEventsByLeadId(created.body.lead.id);
+    const waEvents = events.filter((e) => e.eventType === "whatsapp_response_sent");
+    expect(waEvents).toHaveLength(1);
   });
 });

@@ -91,6 +91,15 @@ export class TelegramGateway implements WhatsappGateway {
         logger.info({ leadId: lead.id }, "Telegram approval request sent");
     }
 
+    async sendLeadResponse(lead: LeadRecord, message: string): Promise<void> {
+        // Telegram gateway is used for owner notifications only.
+        // WhatsApp responses to leads are handled by the WhatsApp gateway.
+        logger.info(
+            { leadId: lead.id, phone: lead.normalizedPhone ?? lead.phone },
+            "Telegram gateway does not send WhatsApp responses to leads (no-op)"
+        );
+    }
+
     async start(handler: (message: InboundWhatsappMessage) => Promise<void>): Promise<void> {
         if (this.polling) {
             return;
@@ -181,6 +190,13 @@ export class LoggingTelegramGateway implements WhatsappGateway {
         logger.warn(
             { leadId: lead.id, message: formatLeadMessage(lead) },
             "Telegram is not configured; approval request logged instead of sent"
+        );
+    }
+
+    async sendLeadResponse(lead: LeadRecord, _message: string): Promise<void> {
+        logger.warn(
+            { leadId: lead.id },
+            "Notification gateway logging mode; lead WhatsApp response skipped"
         );
     }
 

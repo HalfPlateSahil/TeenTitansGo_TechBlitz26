@@ -55,6 +55,7 @@ export interface LeadRecordPatch {
   qualityScore?: number | null;
   aiSummary?: string | null;
   whatsappNotifiedAt?: string | null;
+  whatsappResponseSentAt?: string | null;
   initialEmailSentAt?: string | null;
   followUp1SentAt?: string | null;
   followUp2SentAt?: string | null;
@@ -80,6 +81,7 @@ export interface LeadRecord {
   qualityScore: number | null;
   aiSummary: string | null;
   whatsappNotifiedAt: string | null;
+  whatsappResponseSentAt: string | null;
   initialEmailSentAt: string | null;
   followUp1SentAt: string | null;
   followUp2SentAt: string | null;

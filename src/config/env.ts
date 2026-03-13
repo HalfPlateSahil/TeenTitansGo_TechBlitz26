@@ -30,7 +30,11 @@ const envSchema = z.object({
   WHATSAPP_SESSION_PATH: z.string().default(".wwebjs_auth"),
   WHATSAPP_HEADLESS: z.coerce.boolean().default(true),
   TELEGRAM_BOT_TOKEN: z.string().optional().or(z.literal("")),
-  TELEGRAM_OWNER_CHAT_ID: z.string().optional().or(z.literal(""))
+  TELEGRAM_OWNER_CHAT_ID: z.string().optional().or(z.literal("")),
+  TWILIO_ACCOUNT_SID: z.string().optional().or(z.literal("")),
+  TWILIO_AUTH_TOKEN: z.string().optional().or(z.literal("")),
+  TWILIO_PHONE_NUMBER: z.string().optional().or(z.literal("")),
+  TWILIO_CALLS_ENABLED: z.coerce.boolean().default(false)
 });
 
 const parsed = envSchema.parse(process.env);
@@ -62,10 +66,15 @@ export const env = {
   whatsappSessionPath: parsed.WHATSAPP_SESSION_PATH,
   whatsappHeadless: parsed.WHATSAPP_HEADLESS,
   telegramBotToken: parsed.TELEGRAM_BOT_TOKEN || null,
-  telegramOwnerChatId: parsed.TELEGRAM_OWNER_CHAT_ID || null
+  telegramOwnerChatId: parsed.TELEGRAM_OWNER_CHAT_ID || null,
+  twilioAccountSid: parsed.TWILIO_ACCOUNT_SID || null,
+  twilioAuthToken: parsed.TWILIO_AUTH_TOKEN || null,
+  twilioPhoneNumber: parsed.TWILIO_PHONE_NUMBER || null,
+  twilioCallsEnabled: parsed.TWILIO_CALLS_ENABLED
 } as const;
 
 export const hasSupabaseConfig = Boolean(env.supabaseUrl && env.supabaseServiceRoleKey);
 export const hasSmtpConfig = Boolean(env.gmailSmtpUser && env.gmailSmtpPass);
 export const hasRedisConfig = Boolean(env.upstashRedisUrl);
 export const hasTelegramConfig = Boolean(env.telegramBotToken && env.telegramOwnerChatId);
+export const hasTwilioConfig = Boolean(env.twilioAccountSid && env.twilioAuthToken && env.twilioPhoneNumber && env.twilioCallsEnabled);

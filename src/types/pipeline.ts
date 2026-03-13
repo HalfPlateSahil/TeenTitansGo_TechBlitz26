@@ -1,4 +1,5 @@
 import type { LeadRecord, LeadResearch, LeadScore } from "./lead.js";
+import type { CallLogRecord } from "./call.js";
 
 export interface LeadEnrichmentResult {
   research: LeadResearch;
@@ -42,10 +43,12 @@ export interface EmailReplyPayload {
 export interface LeadAiClient {
   enrichAndScore(lead: LeadRecord): Promise<LeadEnrichmentResult>;
   draftOutreachEmail(input: DraftEmailInput): Promise<DraftedEmail>;
+  draftWhatsappResponse(lead: LeadRecord): Promise<string>;
 }
 
 export interface WhatsappGateway {
   sendApprovalRequest(lead: LeadRecord): Promise<void>;
+  sendLeadResponse(lead: LeadRecord, message: string): Promise<void>;
   start?(handler: (message: InboundWhatsappMessage) => Promise<void>): Promise<void>;
 }
 
@@ -60,4 +63,8 @@ export interface EmailGateway {
 export interface FollowUpScheduler {
   scheduleFollowUp(leadId: string, step: number, delayMs?: number): Promise<void>;
   start?(handler: (job: FollowUpJobData) => Promise<void>): Promise<void>;
+}
+
+export interface CallGateway {
+  initiateCall(lead: LeadRecord): Promise<{ callSid: string; callLogId: string }>;
 }

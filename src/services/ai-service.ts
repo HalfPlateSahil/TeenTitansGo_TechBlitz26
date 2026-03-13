@@ -205,6 +205,12 @@ export class HeuristicLeadAiClient implements LeadAiClient {
       text: `${intro}\n\nYou mentioned: ${input.lead.inquiryText}\n\nIf you want, I can outline the next steps and a simple automation plan for your business.\n\nBest,\nYour AI sales assistant`
     };
   }
+
+  async draftWhatsappResponse(lead: LeadRecord): Promise<string> {
+    const greeting = `Hi ${lead.name}! \u{1F44B}`;
+    const body = `Thanks for reaching out about: ${lead.inquiryText}. We'd love to help you out. We'll be in touch shortly with more details!`;
+    return `${greeting}\n\n${body}`;
+  }
 }
 
 export class GeminiLeadAiClient implements LeadAiClient {
@@ -308,5 +314,34 @@ export class GeminiLeadAiClient implements LeadAiClient {
       text: data.text?.trim() || `Hi ${input.lead.name},\n\nThanks for reaching out about ${input.lead.inquiryText}.`,
       html: data.html?.trim() || null
     };
+  }
+
+  async draftWhatsappResponse(lead: LeadRecord): Promise<string> {
+    const prompt = [
+      "You write short, friendly WhatsApp messages on behalf of a small business sales team.",
+      "Return valid JSON only.",
+      JSON.stringify({ message: "string" }),
+      "Requirements:",
+      "- Keep it under 100 words.",
+      "- Use a warm, conversational tone.",
+      "- Reference the lead's inquiry specifically.",
+      "- Mention you'll follow up soon or offer to schedule a quick call.",
+      "- Do NOT include any placeholders like [Name] — use the actual name.",
+      "- You may use 1-2 relevant emojis.",
+      `Lead context: ${JSON.stringify({
+        name: lead.name,
+        source: lead.source,
+        inquiryText: lead.inquiryText,
+        companyDomain: lead.companyDomain,
+        aiSummary: lead.aiSummary
+      })}`
+    ].join("\n\n");
+
+    const data = await requestGeminiJson<{ message?: string }>(this.apiKey, prompt);
+
+    return (
+      data.message?.trim() ||
+      `Hi ${lead.name}! \u{1F44B} Thanks for reaching out about ${lead.inquiryText}. We'd love to help — we'll follow up with you shortly!`
+    );
   }
 }
