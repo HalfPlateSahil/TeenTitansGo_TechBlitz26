@@ -28,6 +28,8 @@ interface LeadRow {
   initial_email_sent_at: string | null;
   follow_up_1_sent_at: string | null;
   follow_up_2_sent_at: string | null;
+  follow_up_count: number;
+  last_follow_up_sent_at: string | null;
   email_reply_detected_at: string | null;
   created_at: string;
   updated_at: string;
@@ -63,6 +65,8 @@ function mapLeadRow(row: LeadRow): LeadRecord {
     initialEmailSentAt: row.initial_email_sent_at,
     followUp1SentAt: row.follow_up_1_sent_at,
     followUp2SentAt: row.follow_up_2_sent_at,
+    followUpCount: row.follow_up_count ?? 0,
+    lastFollowUpSentAt: row.last_follow_up_sent_at,
     emailReplyDetectedAt: row.email_reply_detected_at,
     createdAt: row.created_at,
     updatedAt: row.updated_at
@@ -90,6 +94,8 @@ function toLeadInsert(lead: LeadRecord): LeadRow {
     initial_email_sent_at: lead.initialEmailSentAt,
     follow_up_1_sent_at: lead.followUp1SentAt,
     follow_up_2_sent_at: lead.followUp2SentAt,
+    follow_up_count: lead.followUpCount,
+    last_follow_up_sent_at: lead.lastFollowUpSentAt,
     email_reply_detected_at: lead.emailReplyDetectedAt,
     created_at: lead.createdAt,
     updated_at: lead.updatedAt
@@ -107,6 +113,8 @@ function toLeadPatch(patch: LeadRecordPatch): Partial<LeadRow> {
     ...(patch.initialEmailSentAt === undefined ? {} : { initial_email_sent_at: patch.initialEmailSentAt }),
     ...(patch.followUp1SentAt === undefined ? {} : { follow_up_1_sent_at: patch.followUp1SentAt }),
     ...(patch.followUp2SentAt === undefined ? {} : { follow_up_2_sent_at: patch.followUp2SentAt }),
+    ...(patch.followUpCount === undefined ? {} : { follow_up_count: patch.followUpCount }),
+    ...(patch.lastFollowUpSentAt === undefined ? {} : { last_follow_up_sent_at: patch.lastFollowUpSentAt }),
     ...(patch.emailReplyDetectedAt === undefined ? {} : { email_reply_detected_at: patch.emailReplyDetectedAt }),
     updated_at: updatedAt
   };
@@ -199,7 +207,7 @@ export class InMemoryLeadRepository implements LeadRepository {
 }
 
 export class SupabaseLeadRepository implements LeadRepository {
-  constructor(private readonly client: SupabaseClient) {}
+  constructor(private readonly client: SupabaseClient) { }
 
   async create(lead: LeadRecord): Promise<LeadRecord> {
     const { data, error } = await this.client.from("leads").insert(toLeadInsert(lead)).select().single();

@@ -36,6 +36,8 @@ function buildLeadRecord(payload: NormalizedLeadInput, duplicateOfLeadId: string
     initialEmailSentAt: null,
     followUp1SentAt: null,
     followUp2SentAt: null,
+    followUpCount: 0,
+    lastFollowUpSentAt: null,
     emailReplyDetectedAt: null,
     createdAt: timestamp,
     updatedAt: timestamp
@@ -219,7 +221,7 @@ export class LeadService {
     };
   }
 
-  async handleOwnerWhatsappCommand(body: string, from?: string): Promise<LeadCommandResult> {
+  async handleOwnerWhatsappCommand(body: string, from?: string, targetLeadId?: string): Promise<LeadCommandResult> {
     if (!isOwnerMessage(from)) {
       return {
         handled: false,
@@ -239,7 +241,9 @@ export class LeadService {
       };
     }
 
-    const lead = await this.repository.findLatestAwaitingApproval();
+    const lead = targetLeadId
+      ? await this.repository.findById(targetLeadId)
+      : await this.repository.findLatestAwaitingApproval();
     if (!lead) {
       return {
         handled: false,
@@ -340,21 +344,38 @@ export class LeadService {
       return;
     }
 
+    if (lead.emailReplyDetectedAt) {
+      logger.info({ leadId: lead.id, step: job.step }, "Skipping follow-up because a reply was already detected");
+      return;
+    }
+
     if (!lead.email) {
       logger.info({ leadId: lead.id, step: job.step }, "Skipping follow-up because the lead has no email address");
       return;
     }
 
-    if ((job.step === 1 && lead.followUp1SentAt) || (job.step === 2 && lead.followUp2SentAt)) {
-      logger.info({ leadId: lead.id, step: job.step }, "Skipping follow-up because it was already sent");
+    if (job.step > env.maxFollowUpSteps) {
+      logger.info({ leadId: lead.id, step: job.step, maxSteps: env.maxFollowUpSteps }, "Follow-up chain completed (max steps reached)");
       return;
     }
 
     const draft = await this.aiClient.draftOutreachEmail({ lead, step: job.step });
-    const kind = job.step === 1 ? "follow_up_1" : "follow_up_2";
+    const kind = `follow_up_${job.step}` as const;
     const delivery = await this.emailGateway.sendEmail(lead, draft, kind);
     const sentAt = new Date().toISOString();
-    const updatedLead = await this.repository.update(lead.id, job.step === 1 ? { followUp1SentAt: sentAt } : { followUp2SentAt: sentAt });
+
+    const patch: import("../types/lead.js").LeadRecordPatch = {
+      followUpCount: job.step,
+      lastFollowUpSentAt: sentAt
+    };
+    // Keep backward compat for the fixed columns
+    if (job.step === 1) {
+      patch.followUp1SentAt = sentAt;
+    } else if (job.step === 2) {
+      patch.followUp2SentAt = sentAt;
+    }
+
+    const updatedLead = await this.repository.update(lead.id, patch);
 
     await this.repository.addEvent({
       leadId: updatedLead.id,
@@ -368,17 +389,54 @@ export class LeadService {
       }
     });
 
-    if (job.step === 1) {
-      await this.followUpScheduler.scheduleFollowUp(updatedLead.id, 2);
+    // Schedule next follow-up if below max steps
+    const nextStep = job.step + 1;
+    if (nextStep <= env.maxFollowUpSteps) {
+      const baseDelayMs = env.followUpDelayHours * 60 * 60 * 1000;
+      const nextDelay = Math.round(baseDelayMs * Math.pow(env.followUpDelayMultiplier, job.step - 1));
+
+      await this.followUpScheduler.scheduleFollowUp(updatedLead.id, nextStep, nextDelay);
       await this.repository.addEvent({
         leadId: updatedLead.id,
         eventType: "follow_up_scheduled",
         actor: "system",
         payload: {
-          step: 2,
-          delayHours: env.followUpDelayHours
+          step: nextStep,
+          delayMs: nextDelay,
+          delayHours: Math.round(nextDelay / (60 * 60 * 1000))
         }
       });
+    } else {
+      logger.info({ leadId: updatedLead.id, completedSteps: job.step }, "Follow-up chain completed");
     }
+  }
+
+  async handleEmailReply(leadEmail: string): Promise<{ handled: boolean; leadId: string | null }> {
+    const allLeads = await this.repository.findAll();
+    const lead = allLeads.find(
+      (l) => l.normalizedEmail === leadEmail.toLowerCase().trim() && ["approved"].includes(l.status)
+    );
+
+    if (!lead) {
+      logger.info({ email: leadEmail }, "No matching active lead found for email reply");
+      return { handled: false, leadId: null };
+    }
+
+    const updated = await this.repository.update(lead.id, {
+      status: "replied",
+      emailReplyDetectedAt: new Date().toISOString()
+    });
+
+    await this.repository.addEvent({
+      leadId: updated.id,
+      eventType: "email_reply_detected",
+      actor: "system",
+      payload: {
+        fromEmail: leadEmail
+      }
+    });
+
+    logger.info({ leadId: updated.id, email: leadEmail }, "Email reply detected — follow-ups stopped");
+    return { handled: true, leadId: updated.id };
   }
 }

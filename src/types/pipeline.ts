@@ -11,7 +11,7 @@ export interface LeadEnrichmentResult {
 
 export interface DraftEmailInput {
   lead: LeadRecord;
-  step: 0 | 1 | 2;
+  step: number;
 }
 
 export interface DraftedEmail {
@@ -23,11 +23,20 @@ export interface DraftedEmail {
 export interface InboundWhatsappMessage {
   from: string;
   body: string;
+  /** When set, the command targets this specific lead instead of the latest pending one. */
+  targetLeadId?: string;
 }
 
 export interface FollowUpJobData {
   leadId: string;
-  step: 1 | 2;
+  step: number;
+}
+
+export interface EmailReplyPayload {
+  from: string;
+  to: string;
+  subject?: string;
+  textBody?: string;
 }
 
 export interface LeadAiClient {
@@ -44,11 +53,11 @@ export interface EmailGateway {
   sendEmail(
     lead: LeadRecord,
     draft: DraftedEmail,
-    kind: "initial" | "follow_up_1" | "follow_up_2"
+    kind: "initial" | `follow_up_${number}`
   ): Promise<{ messageId: string }>;
 }
 
 export interface FollowUpScheduler {
-  scheduleFollowUp(leadId: string, step: 1 | 2, delayMs?: number): Promise<void>;
+  scheduleFollowUp(leadId: string, step: number, delayMs?: number): Promise<void>;
   start?(handler: (job: FollowUpJobData) => Promise<void>): Promise<void>;
 }

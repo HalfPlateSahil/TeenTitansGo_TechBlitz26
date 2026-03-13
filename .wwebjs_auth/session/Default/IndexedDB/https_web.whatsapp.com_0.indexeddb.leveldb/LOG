@@ -1,2 +1,47 @@
-2026/03/13-01:21:50.744 67435 Creating DB /Volumes/Crucial X9/Projects/COMPETITION/TeenTitansGo_TechBlitz26/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb since it was missing.
-2026/03/13-01:21:50.747 67435 Reusing MANIFEST /Volumes/Crucial X9/Projects/COMPETITION/TeenTitansGo_TechBlitz26/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/03/13-01:42:33.643 72fcf Reusing MANIFEST /Volumes/Crucial X9/Projects/COMPETITION/TeenTitansGo_TechBlitz26/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/03/13-01:42:33.643 72fcf Recovering log #2108
+2026/03/13-01:42:33.647 72fcf Reusing old log /Volumes/Crucial X9/Projects/COMPETITION/TeenTitansGo_TechBlitz26/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/002108.log 
+2026/03/13-01:42:39.592 72fcf Level-0 table #2128: started
+2026/03/13-01:42:39.605 72fcf Level-0 table #2128: 1119609 bytes OK
+2026/03/13-01:42:39.631 72fcf Delete type=0 #2108
+2026/03/13-01:42:39.744 72fcd Compacting 1@0 + 0@1 files
+2026/03/13-01:42:39.754 72fcd Generated table #2129@0: 32574 keys, 717863 bytes
+2026/03/13-01:42:39.757 72fcd Generated table #2130@0: 2258 keys, 69219 bytes
+2026/03/13-01:42:39.757 72fcd Compacted 1@0 + 0@1 files => 787082 bytes
+2026/03/13-01:42:39.761 72fcd compacted to: files[ 0 2 48 0 0 0 0 ]
+2026/03/13-01:42:39.861 72fcf Compacting 1@1 + 8@2 files
+2026/03/13-01:42:39.887 72fcf Generated table #2131@1: 48384 keys, 2210865 bytes
+2026/03/13-01:42:39.923 72fcf Generated table #2132@1: 82976 keys, 2306136 bytes
+2026/03/13-01:42:39.952 72fcf Generated table #2133@1: 14288 keys, 2215749 bytes
+2026/03/13-01:42:39.970 72fcf Generated table #2134@1: 12923 keys, 2139309 bytes
+2026/03/13-01:42:39.997 72fcf Generated table #2135@1: 96176 keys, 2246350 bytes
+2026/03/13-01:42:40.024 72fcf Generated table #2136@1: 100073 keys, 2250075 bytes
+2026/03/13-01:42:40.050 72fcf Generated table #2137@1: 100009 keys, 2250436 bytes
+2026/03/13-01:42:40.077 72fcf Generated table #2138@1: 95835 keys, 2245999 bytes
+2026/03/13-01:42:40.080 72fcf Generated table #2139@1: 434 keys, 37505 bytes
+2026/03/13-01:42:40.080 72fcf Compacted 1@1 + 8@2 files => 17902424 bytes
+2026/03/13-01:42:40.090 72fcf compacted to: files[ 0 1 49 0 0 0 0 ]
+2026/03/13-01:42:40.090 72fcf Delete type=2 #2113
+2026/03/13-01:42:40.090 72fcf Delete type=2 #2112
+2026/03/13-01:42:40.090 72fcf Delete type=2 #2115
+2026/03/13-01:42:40.090 72fcf Delete type=2 #2128
+2026/03/13-01:42:40.090 72fcf Delete type=2 #2114
+2026/03/13-01:42:40.090 72fcf Delete type=2 #2116
+2026/03/13-01:42:40.090 72fcf Delete type=2 #2117
+2026/03/13-01:42:40.090 72fcf Delete type=2 #2119
+2026/03/13-01:42:40.090 72fcf Delete type=2 #2130
+2026/03/13-01:42:40.090 72fcf Delete type=2 #2118
+2026/03/13-01:42:40.211 72fcf Compacting 1@1 + 5@2 files
+2026/03/13-01:42:40.247 72fcf Generated table #2140@1: 86266 keys, 2265170 bytes
+2026/03/13-01:42:40.268 72fcf Generated table #2141@1: 23531 keys, 2205578 bytes
+2026/03/13-01:42:40.293 72fcf Generated table #2142@1: 52200 keys, 2212029 bytes
+2026/03/13-01:42:40.321 72fcf Generated table #2143@1: 55500 keys, 2223327 bytes
+2026/03/13-01:42:40.330 72fcf Generated table #2144@1: 11700 keys, 1083999 bytes
+2026/03/13-01:42:40.330 72fcf Compacted 1@1 + 5@2 files => 9990103 bytes
+2026/03/13-01:42:40.337 72fcf compacted to: files[ 0 0 49 0 0 0 0 ]
+2026/03/13-01:42:40.337 72fcf Delete type=2 #2129
+2026/03/13-01:42:40.337 72fcf Delete type=2 #2125
+2026/03/13-01:42:40.337 72fcf Delete type=2 #2124
+2026/03/13-01:42:40.337 72fcf Delete type=2 #2121
+2026/03/13-01:42:40.337 72fcf Delete type=2 #2123
+2026/03/13-01:42:40.337 72fcf Delete type=2 #2122

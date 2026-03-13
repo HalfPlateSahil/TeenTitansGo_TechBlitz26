@@ -58,6 +58,8 @@ export interface LeadRecordPatch {
   initialEmailSentAt?: string | null;
   followUp1SentAt?: string | null;
   followUp2SentAt?: string | null;
+  followUpCount?: number;
+  lastFollowUpSentAt?: string | null;
   emailReplyDetectedAt?: string | null;
 }
 
@@ -81,6 +83,8 @@ export interface LeadRecord {
   initialEmailSentAt: string | null;
   followUp1SentAt: string | null;
   followUp2SentAt: string | null;
+  followUpCount: number;
+  lastFollowUpSentAt: string | null;
   emailReplyDetectedAt: string | null;
   createdAt: string;
   updatedAt: string;

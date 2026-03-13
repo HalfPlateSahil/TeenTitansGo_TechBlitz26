@@ -24,8 +24,13 @@ const envSchema = z.object({
   UPSTASH_REDIS_URL: z.string().optional().or(z.literal("")),
   UPSTASH_REDIS_TOKEN: z.string().optional().or(z.literal("")),
   FOLLOW_UP_DELAY_HOURS: z.coerce.number().positive().default(48),
+  MAX_FOLLOW_UP_STEPS: z.coerce.number().int().min(0).default(5),
+  FOLLOW_UP_DELAY_MULTIPLIER: z.coerce.number().positive().default(1.5),
+  INSTAGRAM_VERIFY_TOKEN: z.string().optional().or(z.literal("")),
   WHATSAPP_SESSION_PATH: z.string().default(".wwebjs_auth"),
-  WHATSAPP_HEADLESS: z.coerce.boolean().default(true)
+  WHATSAPP_HEADLESS: z.coerce.boolean().default(true),
+  TELEGRAM_BOT_TOKEN: z.string().optional().or(z.literal("")),
+  TELEGRAM_OWNER_CHAT_ID: z.string().optional().or(z.literal(""))
 });
 
 const parsed = envSchema.parse(process.env);
@@ -51,10 +56,16 @@ export const env = {
   upstashRedisUrl: parsed.UPSTASH_REDIS_URL || null,
   upstashRedisToken: parsed.UPSTASH_REDIS_TOKEN || null,
   followUpDelayHours: parsed.FOLLOW_UP_DELAY_HOURS,
+  maxFollowUpSteps: parsed.MAX_FOLLOW_UP_STEPS,
+  followUpDelayMultiplier: parsed.FOLLOW_UP_DELAY_MULTIPLIER,
+  instagramVerifyToken: parsed.INSTAGRAM_VERIFY_TOKEN || null,
   whatsappSessionPath: parsed.WHATSAPP_SESSION_PATH,
-  whatsappHeadless: parsed.WHATSAPP_HEADLESS
+  whatsappHeadless: parsed.WHATSAPP_HEADLESS,
+  telegramBotToken: parsed.TELEGRAM_BOT_TOKEN || null,
+  telegramOwnerChatId: parsed.TELEGRAM_OWNER_CHAT_ID || null
 } as const;
 
 export const hasSupabaseConfig = Boolean(env.supabaseUrl && env.supabaseServiceRoleKey);
 export const hasSmtpConfig = Boolean(env.gmailSmtpUser && env.gmailSmtpPass);
 export const hasRedisConfig = Boolean(env.upstashRedisUrl);
+export const hasTelegramConfig = Boolean(env.telegramBotToken && env.telegramOwnerChatId);

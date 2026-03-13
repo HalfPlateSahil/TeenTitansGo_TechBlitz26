@@ -1,0 +1,94 @@
+2026/03/13-01:42:15.242 72c35 Reusing MANIFEST /Volumes/Crucial X9/Projects/COMPETITION/TeenTitansGo_TechBlitz26/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/03/13-01:42:15.243 72c35 Recovering log #2075
+2026/03/13-01:42:15.264 72c35 Reusing old log /Volumes/Crucial X9/Projects/COMPETITION/TeenTitansGo_TechBlitz26/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/002075.log 
+2026/03/13-01:42:18.915 72c37 Level-0 table #2091: started
+2026/03/13-01:42:18.933 72c37 Level-0 table #2091: 1039462 bytes OK
+2026/03/13-01:42:18.934 72c37 Delete type=0 #2075
+2026/03/13-01:42:19.034 72c44 Compacting 1@0 + 0@1 files
+2026/03/13-01:42:19.041 72c44 Generated table #2092@0: 22640 keys, 283282 bytes
+2026/03/13-01:42:19.048 72c44 Generated table #2093@0: 14074 keys, 355161 bytes
+2026/03/13-01:42:19.048 72c44 Compacted 1@0 + 0@1 files => 638443 bytes
+2026/03/13-01:42:19.050 72c44 compacted to: files[ 0 2 49 0 0 0 0 ]
+2026/03/13-01:42:19.097 72c35 Compacting 1@1 + 5@2 files
+2026/03/13-01:42:19.128 72c35 Generated table #2094@1: 72928 keys, 2249306 bytes
+2026/03/13-01:42:19.152 72c35 Generated table #2095@1: 24500 keys, 2205677 bytes
+2026/03/13-01:42:19.196 72c35 Generated table #2096@1: 60134 keys, 2222292 bytes
+2026/03/13-01:42:19.227 72c35 Generated table #2097@1: 51757 keys, 2219371 bytes
+2026/03/13-01:42:19.228 72c35 Generated table #2098@1: 378 keys, 77102 bytes
+2026/03/13-01:42:19.228 72c35 Compacted 1@1 + 5@2 files => 8973748 bytes
+2026/03/13-01:42:19.230 72c35 compacted to: files[ 0 1 49 0 0 0 0 ]
+2026/03/13-01:42:19.230 72c35 Delete type=2 #2048
+2026/03/13-01:42:19.230 72c35 Delete type=2 #2088
+2026/03/13-01:42:19.230 72c35 Delete type=2 #2091
+2026/03/13-01:42:19.230 72c35 Delete type=2 #2046
+2026/03/13-01:42:19.230 72c35 Delete type=2 #2047
+2026/03/13-01:42:19.230 72c35 Delete type=2 #2092
+2026/03/13-01:42:19.230 72c35 Delete type=2 #2045
+2026/03/13-01:42:19.276 72c44 Compacting 1@1 + 8@2 files
+2026/03/13-01:42:19.312 72c44 Generated table #2099@1: 47722 keys, 2210918 bytes
+2026/03/13-01:42:19.353 72c44 Generated table #2100@1: 83643 keys, 2306485 bytes
+2026/03/13-01:42:19.391 72c44 Generated table #2101@1: 14408 keys, 2216254 bytes
+2026/03/13-01:42:19.420 72c44 Generated table #2102@1: 12845 keys, 2138152 bytes
+2026/03/13-01:42:19.459 72c44 Generated table #2103@1: 96347 keys, 2247046 bytes
+2026/03/13-01:42:19.491 72c44 Generated table #2104@1: 100007 keys, 2249006 bytes
+2026/03/13-01:42:19.520 72c44 Generated table #2105@1: 99948 keys, 2251122 bytes
+2026/03/13-01:42:19.548 72c44 Generated table #2106@1: 93997 keys, 2243101 bytes
+2026/03/13-01:42:19.552 72c44 Generated table #2107@1: 3550 keys, 305919 bytes
+2026/03/13-01:42:19.552 72c44 Compacted 1@1 + 8@2 files => 18168003 bytes
+2026/03/13-01:42:19.555 72c44 compacted to: files[ 0 0 50 0 0 0 0 ]
+2026/03/13-01:42:22.106 72c37 Level-0 table #2109: started
+2026/03/13-01:42:22.125 72c37 Level-0 table #2109: 1046268 bytes OK
+2026/03/13-01:42:22.129 72c37 Delete type=0 #2090
+2026/03/13-01:42:22.129 72c37 Delete type=2 #2085
+2026/03/13-01:42:22.129 72c37 Delete type=2 #2084
+2026/03/13-01:42:22.129 72c37 Delete type=2 #2086
+2026/03/13-01:42:22.129 72c37 Delete type=2 #2079
+2026/03/13-01:42:22.129 72c37 Delete type=2 #2093
+2026/03/13-01:42:22.129 72c37 Delete type=2 #2083
+2026/03/13-01:42:22.129 72c37 Delete type=2 #2082
+2026/03/13-01:42:22.129 72c37 Delete type=2 #2080
+2026/03/13-01:42:22.129 72c37 Delete type=2 #2081
+2026/03/13-01:42:22.272 72c37 Compacting 1@0 + 0@1 files
+2026/03/13-01:42:22.282 72c37 Generated table #2110@0: 27643 keys, 476830 bytes
+2026/03/13-01:42:22.284 72c37 Generated table #2111@0: 1039 keys, 54793 bytes
+2026/03/13-01:42:22.284 72c37 Compacted 1@0 + 0@1 files => 531623 bytes
+2026/03/13-01:42:22.285 72c37 compacted to: files[ 0 2 50 0 0 0 0 ]
+2026/03/13-01:42:22.285 72c37 Delete type=2 #2109
+2026/03/13-01:42:22.603 72c44 Compacting 1@1 + 8@2 files
+2026/03/13-01:42:22.647 72c44 Generated table #2112@1: 47722 keys, 2210905 bytes
+2026/03/13-01:42:22.680 72c44 Generated table #2113@1: 83635 keys, 2305956 bytes
+2026/03/13-01:42:22.699 72c44 Generated table #2114@1: 14408 keys, 2216251 bytes
+2026/03/13-01:42:22.714 72c44 Generated table #2115@1: 12845 keys, 2138152 bytes
+2026/03/13-01:42:22.740 72c44 Generated table #2116@1: 96088 keys, 2244770 bytes
+2026/03/13-01:42:22.766 72c44 Generated table #2117@1: 99982 keys, 2248799 bytes
+2026/03/13-01:42:22.792 72c44 Generated table #2118@1: 99893 keys, 2248418 bytes
+2026/03/13-01:42:22.817 72c44 Generated table #2119@1: 94601 keys, 2243124 bytes
+2026/03/13-01:42:22.820 72c44 Generated table #2120@1: 266 keys, 23179 bytes
+2026/03/13-01:42:22.820 72c44 Compacted 1@1 + 8@2 files => 17879554 bytes
+2026/03/13-01:42:22.822 72c44 compacted to: files[ 0 1 51 0 0 0 0 ]
+2026/03/13-01:42:22.823 72c44 Delete type=2 #2106
+2026/03/13-01:42:22.823 72c44 Delete type=2 #2099
+2026/03/13-01:42:22.823 72c44 Delete type=2 #2104
+2026/03/13-01:42:22.823 72c44 Delete type=2 #2105
+2026/03/13-01:42:22.823 72c44 Delete type=2 #2111
+2026/03/13-01:42:22.823 72c44 Delete type=2 #2101
+2026/03/13-01:42:22.823 72c44 Delete type=2 #2100
+2026/03/13-01:42:22.823 72c44 Delete type=2 #2102
+2026/03/13-01:42:22.823 72c44 Delete type=2 #2103
+2026/03/13-01:42:23.249 72c37 Compacting 1@1 + 8@2 files
+2026/03/13-01:42:23.278 72c37 Generated table #2121@1: 75398 keys, 2251717 bytes
+2026/03/13-01:42:23.297 72c37 Generated table #2122@1: 24318 keys, 2206151 bytes
+2026/03/13-01:42:23.322 72c37 Generated table #2123@1: 59446 keys, 2221324 bytes
+2026/03/13-01:42:23.346 72c37 Generated table #2124@1: 52390 keys, 2220456 bytes
+2026/03/13-01:42:23.353 72c37 Generated table #2125@1: 4001 keys, 720366 bytes
+2026/03/13-01:42:23.353 72c37 Compacted 1@1 + 8@2 files => 9620014 bytes
+2026/03/13-01:42:23.354 72c37 compacted to: files[ 0 0 48 0 0 0 0 ]
+2026/03/13-01:42:23.355 72c37 Delete type=2 #2098
+2026/03/13-01:42:23.355 72c37 Delete type=2 #2110
+2026/03/13-01:42:23.355 72c37 Delete type=2 #1698
+2026/03/13-01:42:23.355 72c37 Delete type=2 #1770
+2026/03/13-01:42:23.355 72c37 Delete type=2 #2097
+2026/03/13-01:42:23.355 72c37 Delete type=2 #1575
+2026/03/13-01:42:23.355 72c37 Delete type=2 #2096
+2026/03/13-01:42:23.355 72c37 Delete type=2 #2094
+2026/03/13-01:42:23.355 72c37 Delete type=2 #2095

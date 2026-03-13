@@ -36,7 +36,7 @@ export class BullMqFollowUpScheduler implements FollowUpScheduler {
 
   private worker: Worker<FollowUpJobData> | null = null;
 
-  async scheduleFollowUp(leadId: string, step: 1 | 2, delayMs = env.followUpDelayHours * 60 * 60 * 1000): Promise<void> {
+  async scheduleFollowUp(leadId: string, step: number, delayMs = env.followUpDelayHours * 60 * 60 * 1000): Promise<void> {
     await this.queue.add("follow-up", { leadId, step }, {
       delay: delayMs,
       jobId: `lead-${leadId}-step-${step}`
@@ -65,7 +65,7 @@ export class BullMqFollowUpScheduler implements FollowUpScheduler {
 export class InMemoryFollowUpScheduler implements FollowUpScheduler {
   readonly scheduledJobs: Array<FollowUpJobData & { delayMs: number }> = [];
 
-  async scheduleFollowUp(leadId: string, step: 1 | 2, delayMs = env.followUpDelayHours * 60 * 60 * 1000): Promise<void> {
+  async scheduleFollowUp(leadId: string, step: number, delayMs = env.followUpDelayHours * 60 * 60 * 1000): Promise<void> {
     this.scheduledJobs.push({ leadId, step, delayMs });
   }
 

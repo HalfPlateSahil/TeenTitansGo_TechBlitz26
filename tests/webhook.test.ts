@@ -12,7 +12,7 @@ import type { DraftEmailInput, DraftedEmail, EmailGateway, FollowUpScheduler, Le
 import type { LeadEnrichmentResult } from "../src/types/pipeline.js";
 
 class StubAiClient implements LeadAiClient {
-  constructor(private readonly qualityScore: number) {}
+  constructor(private readonly qualityScore: number) { }
 
   async enrichAndScore(lead: Parameters<LeadAiClient["enrichAndScore"]>[0]): Promise<LeadEnrichmentResult> {
     return {
@@ -189,7 +189,6 @@ describe("POST /api/whatsapp/messages", () => {
     const approval = await request(app)
       .post("/api/whatsapp/messages")
       .send({
-        from: "15551234567@c.us",
         body: "1"
       });
 

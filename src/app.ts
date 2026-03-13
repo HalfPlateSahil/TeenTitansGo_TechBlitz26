@@ -6,6 +6,8 @@ import { LeadService } from "./services/lead-service.js";
 import { healthRouter } from "./routes/health.js";
 import { createWebhookRouter } from "./routes/webhooks.js";
 import { createWhatsappRouter } from "./routes/whatsapp.js";
+import { createEmailReplyRouter } from "./routes/email-reply.js";
+import { createInstagramRouter } from "./routes/instagram.js";
 
 export function createApp(leadService: LeadService) {
   const app = express();
@@ -19,13 +21,17 @@ export function createApp(leadService: LeadService) {
       routes: {
         health: "/health",
         leadWebhook: "/api/webhooks/leads",
-        whatsappMessages: "/api/whatsapp/messages"
+        whatsappMessages: "/api/whatsapp/messages",
+        emailReply: "/api/webhooks/email-reply",
+        instagram: "/api/webhooks/instagram"
       }
     });
   });
   app.use(healthRouter);
   app.use(createWebhookRouter(leadService));
   app.use(createWhatsappRouter(leadService));
+  app.use(createEmailReplyRouter(leadService));
+  app.use(createInstagramRouter(leadService));
 
   app.use((error: Error, _request: express.Request, response: express.Response, _next: express.NextFunction) => {
     logger.error({ err: error }, "Request failed");
