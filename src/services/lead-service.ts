@@ -2,7 +2,7 @@ import { env } from "../config/env.js";
 import { logger } from "../lib/logger.js";
 import type { LeadRepository } from "../repositories/lead-repository.js";
 import type { LeadCommandResult, LeadIngestionResult, LeadRecord, NormalizedLeadInput } from "../types/lead.js";
-import type { CallGateway, EmailGateway, FollowUpJobData, FollowUpScheduler, LeadAiClient, WhatsappGateway } from "../types/pipeline.js";
+import type { CallGateway, EmailGateway, FollowUpJobData, FollowUpScheduler, LeadAiClient, WhatsappGateway, WhatsappOutreachGateway } from "../types/pipeline.js";
 import type { LeadWebhookPayload } from "../types/webhook.js";
 import { scoreDuplicateLead } from "../utils/fuzzy.js";
 import { createId } from "../utils/ids.js";
@@ -64,7 +64,8 @@ export class LeadService {
     private readonly whatsappGateway: WhatsappGateway,
     private readonly emailGateway: EmailGateway,
     private readonly followUpScheduler: FollowUpScheduler,
-    private readonly callGateway?: CallGateway
+    private readonly callGateway?: CallGateway,
+    private readonly whatsappOutreach?: WhatsappOutreachGateway
   ) { }
 
   async ingest(payload: LeadWebhookPayload, fallbackSource?: string): Promise<LeadIngestionResult> {
@@ -328,10 +329,10 @@ export class LeadService {
     });
 
     // Send AI-generated WhatsApp response to the lead
-    if (approvedLead.phone || approvedLead.normalizedPhone) {
+    if ((approvedLead.phone || approvedLead.normalizedPhone) && this.whatsappOutreach) {
       try {
         const whatsappMessage = await this.aiClient.draftWhatsappResponse(approvedLead);
-        await this.whatsappGateway.sendLeadResponse(approvedLead, whatsappMessage);
+        await this.whatsappOutreach.sendMessage(approvedLead, whatsappMessage);
         approvedLead = await this.repository.update(approvedLead.id, {
           whatsappResponseSentAt: new Date().toISOString()
         });

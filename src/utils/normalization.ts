@@ -34,16 +34,27 @@ export function normalizePhone(phone: string | null): string | null {
     return null;
   }
 
+  // Already in E.164 format
+  if (phone.startsWith("+") && phone.replace(/\D+/g, "").length >= 10) {
+    return phone.replace(/[^\d+]/g, "");
+  }
+
   const digits = phone.replace(/\D+/g, "");
   if (digits.length < 7) {
     return null;
   }
 
+  // 10-digit number: detect Indian vs US
   if (digits.length === 10) {
+    // Indian mobile numbers start with 6, 7, 8, or 9
+    if (/^[6-9]/.test(digits)) {
+      return `+91${digits}`;
+    }
     return `+1${digits}`;
   }
 
-  return digits.startsWith("+") ? digits : `+${digits}`;
+  // Already has country code (11+ digits)
+  return `+${digits}`;
 }
 
 export function normalizeName(name: string): string {

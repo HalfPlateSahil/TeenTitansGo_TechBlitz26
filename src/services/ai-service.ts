@@ -208,7 +208,7 @@ export class HeuristicLeadAiClient implements LeadAiClient {
 
   async draftWhatsappResponse(lead: LeadRecord): Promise<string> {
     const greeting = `Hi ${lead.name}! \u{1F44B}`;
-    const body = `Thanks for reaching out about: ${lead.inquiryText}. We'd love to help you out. We'll be in touch shortly with more details!`;
+    const body = `Thanks for reaching out about: ${lead.inquiryText}. We'd love to discuss this further with you! Would you be available for a quick call or meeting this week? Just let us know a time that works for you.`;
     return `${greeting}\n\n${body}`;
   }
 }
@@ -325,8 +325,9 @@ export class GeminiLeadAiClient implements LeadAiClient {
       "- Keep it under 100 words.",
       "- Use a warm, conversational tone.",
       "- Reference the lead's inquiry specifically.",
-      "- Mention you'll follow up soon or offer to schedule a quick call.",
-      "- Do NOT include any placeholders like [Name] — use the actual name.",
+      "- The main goal is to SCHEDULE A MEETING or a quick call with the lead.",
+      "- Ask them for their availability or suggest scheduling a brief call this week.",
+      "- Do NOT include any placeholders like [Name] \u2014 use the actual name.",
       "- You may use 1-2 relevant emojis.",
       `Lead context: ${JSON.stringify({
         name: lead.name,
@@ -341,7 +342,7 @@ export class GeminiLeadAiClient implements LeadAiClient {
 
     return (
       data.message?.trim() ||
-      `Hi ${lead.name}! \u{1F44B} Thanks for reaching out about ${lead.inquiryText}. We'd love to help — we'll follow up with you shortly!`
+      `Hi ${lead.name}! \u{1F44B} Thanks for your interest in ${lead.inquiryText}. We'd love to schedule a quick call to discuss how we can help. When would be a good time for you this week?`
     );
   }
 }

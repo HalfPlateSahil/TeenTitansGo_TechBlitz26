@@ -1,5 +1,7 @@
 import cors from "cors";
 import express from "express";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { logger } from "./lib/logger.js";
 import { LeadService } from "./services/lead-service.js";
@@ -13,6 +15,7 @@ import { createEmailReplyRouter } from "./routes/email-reply.js";
 import { createInstagramRouter } from "./routes/instagram.js";
 import { createDashboardRouter } from "./routes/dashboard.js";
 import { createCallRouter } from "./routes/calls.js";
+import { createLeadFormRouter } from "./routes/lead-form.js";
 
 export function createApp(
   leadService: LeadService,
@@ -22,15 +25,21 @@ export function createApp(
 ) {
   const app = express();
 
+  // Serve the lead-capture form from public/
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  app.use(express.static(path.resolve(__dirname, "..", "public")));
+
   app.use(cors());
   app.use(express.json({ limit: "1mb" }));
   // Parse URL-encoded bodies for Twilio webhook callbacks
   app.use(express.urlencoded({ extended: false }));
-  app.get("/", (_request, response) => {
+  app.get("/api", (_request, response) => {
     response.status(200).json({
       ok: true,
       service: "Invisible CRM backend",
       routes: {
+        leadForm: "/",
+        leadFormSubmit: "/api/leads/submit",
         health: "/health",
         leadWebhook: "/api/webhooks/leads",
         whatsappMessages: "/api/whatsapp/messages",
@@ -41,6 +50,7 @@ export function createApp(
     });
   });
   app.use(healthRouter);
+  app.use(createLeadFormRouter(leadService));
   app.use(createWebhookRouter(leadService));
   app.use(createWhatsappRouter(leadService));
   app.use(createEmailReplyRouter(leadService));

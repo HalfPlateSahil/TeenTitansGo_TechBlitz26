@@ -10,7 +10,7 @@ import { GeminiLeadAiClient, HeuristicLeadAiClient, TavilyLeadResearchClient } f
 import { LeadService } from "./services/lead-service.js";
 import { LoggingEmailGateway, SmtpEmailGateway } from "./services/email-service.js";
 import { LoggingTelegramGateway, TelegramGateway } from "./services/telegram-service.js";
-import { LoggingWhatsappGateway, WhatsAppWebGateway } from "./services/whatsapp-service.js";
+import { LoggingWhatsappGateway, LoggingWhatsappOutreachGateway, WhatsAppOutreachService } from "./services/whatsapp-service.js";
 import { TwilioCallGateway, LoggingCallGateway } from "./services/call-service.js";
 import { CallConversationService } from "./services/call-conversation-service.js";
 
@@ -33,9 +33,18 @@ async function bootstrap() {
     ? new TwilioCallGateway(callLogRepository)
     : new LoggingCallGateway();
 
+  // WhatsApp outreach gateway — dedicated to sending messages to leads
+  const whatsappOutreach = env.nodeEnv !== "test"
+    ? new WhatsAppOutreachService()
+    : new LoggingWhatsappOutreachGateway();
+
   const callConversationService = new CallConversationService(callLogRepository, repository);
 
-  const leadService = new LeadService(repository, aiClient, notificationGateway, emailGateway, followUpScheduler, hasTwilioConfig ? callGateway : undefined);
+  const leadService = new LeadService(
+    repository, aiClient, notificationGateway, emailGateway, followUpScheduler,
+    hasTwilioConfig ? callGateway : undefined,
+    whatsappOutreach
+  );
   const app = createApp(leadService, repository, callConversationService, callLogRepository);
 
   await followUpScheduler.start?.((job) => leadService.processFollowUpJob(job));
@@ -44,13 +53,19 @@ async function bootstrap() {
     logger.error({ err: error }, "Notification gateway failed to start; the API will continue without live notifications");
   });
 
+  // Start WhatsApp outreach client (initializes Puppeteer, shows QR code if needed)
+  whatsappOutreach.start?.().catch((error: unknown) => {
+    logger.error({ err: error }, "WhatsApp outreach client failed to start; lead messages will not be sent");
+  });
+
   app.listen(env.port, () => {
     logger.info(
       {
         port: env.port,
         persistence: hasSupabaseConfig ? "supabase" : "in-memory",
         followUpQueue: hasRedisConfig ? "bullmq" : "in-memory",
-        twillioCalls: hasTwilioConfig ? "enabled" : "disabled"
+        calls: hasTwilioConfig ? "twilio" : "disabled",
+        whatsappOutreach: env.nodeEnv !== "test" ? "enabled" : "logging"
       },
       "Invisible CRM backend listening"
     );

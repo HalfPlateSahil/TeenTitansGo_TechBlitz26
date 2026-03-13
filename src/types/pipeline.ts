@@ -68,3 +68,12 @@ export interface FollowUpScheduler {
 export interface CallGateway {
   initiateCall(lead: LeadRecord): Promise<{ callSid: string; callLogId: string }>;
 }
+
+/**
+ * Dedicated gateway for sending WhatsApp messages to LEADS (not the owner).
+ * Separate from the WhatsappGateway which handles owner notifications.
+ */
+export interface WhatsappOutreachGateway {
+  sendMessage(lead: LeadRecord, message: string): Promise<void>;
+  start?(): Promise<void>;
+}

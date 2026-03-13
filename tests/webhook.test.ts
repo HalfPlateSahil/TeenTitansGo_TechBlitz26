@@ -8,8 +8,9 @@ import { LoggingEmailGateway } from "../src/services/email-service.js";
 import { InMemoryFollowUpScheduler } from "../src/services/follow-up-service.js";
 import { LeadService } from "../src/services/lead-service.js";
 import { LoggingWhatsappGateway } from "../src/services/whatsapp-service.js";
-import type { DraftEmailInput, DraftedEmail, EmailGateway, FollowUpScheduler, LeadAiClient, WhatsappGateway } from "../src/types/pipeline.js";
+import type { DraftEmailInput, DraftedEmail, EmailGateway, FollowUpScheduler, LeadAiClient, WhatsappGateway, WhatsappOutreachGateway } from "../src/types/pipeline.js";
 import type { LeadEnrichmentResult } from "../src/types/pipeline.js";
+import type { LeadRecord } from "../src/types/lead.js";
 
 class StubAiClient implements LeadAiClient {
   constructor(private readonly qualityScore: number) { }
@@ -61,6 +62,14 @@ class StubWhatsappGateway implements WhatsappGateway {
   }
 }
 
+class StubWhatsappOutreachGateway implements WhatsappOutreachGateway {
+  readonly sentMessages: Array<{ leadId: string; message: string }> = [];
+
+  async sendMessage(lead: LeadRecord, message: string): Promise<void> {
+    this.sentMessages.push({ leadId: lead.id, message });
+  }
+}
+
 class StubEmailGateway implements EmailGateway {
   readonly sentEmails: Array<{ leadId: string; kind: string }> = [];
 
@@ -80,19 +89,22 @@ function buildApp(options?: {
   whatsappGateway?: WhatsappGateway;
   emailGateway?: EmailGateway;
   followUpScheduler?: InMemoryFollowUpScheduler;
+  whatsappOutreach?: WhatsappOutreachGateway;
 }) {
   const repository = options?.repository ?? new InMemoryLeadRepository();
   const aiClient = options?.aiClient ?? new HeuristicLeadAiClient();
   const whatsappGateway = options?.whatsappGateway ?? new LoggingWhatsappGateway();
   const emailGateway = options?.emailGateway ?? new LoggingEmailGateway();
   const followUpScheduler = options?.followUpScheduler ?? new InMemoryFollowUpScheduler();
-  const leadService = new LeadService(repository, aiClient, whatsappGateway, emailGateway, followUpScheduler);
+  const whatsappOutreach = options?.whatsappOutreach;
+  const leadService = new LeadService(repository, aiClient, whatsappGateway, emailGateway, followUpScheduler, undefined, whatsappOutreach);
 
   return {
     repository,
     whatsappGateway,
     emailGateway,
     followUpScheduler,
+    whatsappOutreach,
     app: createApp(leadService, repository)
   };
 }
@@ -221,12 +233,14 @@ describe("WhatsApp response on lead approval", () => {
     const whatsappGateway = new StubWhatsappGateway();
     const emailGateway = new StubEmailGateway();
     const followUpScheduler = new InMemoryFollowUpScheduler();
+    const whatsappOutreach = new StubWhatsappOutreachGateway();
     const { app } = buildApp({
       repository,
       aiClient: new StubAiClient(82),
       whatsappGateway,
       emailGateway,
-      followUpScheduler
+      followUpScheduler,
+      whatsappOutreach
     });
 
     const created = await request(app)
@@ -248,10 +262,10 @@ describe("WhatsApp response on lead approval", () => {
     expect(approval.body.handled).toBe(true);
     expect(approval.body.action).toBe("approved");
 
-    // WhatsApp response should have been sent to the lead
-    expect(whatsappGateway.sentLeadResponses).toHaveLength(1);
-    expect(whatsappGateway.sentLeadResponses[0].leadId).toBe(created.body.lead.id);
-    expect(whatsappGateway.sentLeadResponses[0].message).toContain("Starfire");
+    // WhatsApp outreach response should have been sent to the lead
+    expect(whatsappOutreach.sentMessages).toHaveLength(1);
+    expect(whatsappOutreach.sentMessages[0].leadId).toBe(created.body.lead.id);
+    expect(whatsappOutreach.sentMessages[0].message).toContain("Starfire");
 
     // Verify the event was logged
     const events = await repository.findEventsByLeadId(created.body.lead.id);

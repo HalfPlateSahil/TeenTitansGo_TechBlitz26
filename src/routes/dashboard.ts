@@ -130,6 +130,34 @@ export function createDashboardRouter(leadService: LeadService, repository: Lead
       next(error);
     }
   });
+  // ——— POST /api/leads/:id/unarchive ———
+  // Move an archived lead back to review_needed so the manager can approve/reject it.
+  router.post("/api/leads/:id/unarchive", async (request, response, next) => {
+    try {
+      const lead = await repository.findById(request.params.id);
+      if (!lead) {
+        response.status(404).json({ ok: false, error: "Lead not found" });
+        return;
+      }
+
+      if (lead.status !== "archived") {
+        response.status(400).json({ ok: false, error: "Lead is not archived" });
+        return;
+      }
+
+      const updated = await repository.update(lead.id, { status: "review_needed" });
+      await repository.addEvent({
+        leadId: updated.id,
+        eventType: "lead_unarchived",
+        actor: "owner",
+        payload: { via: "dashboard", previousStatus: "archived" }
+      });
+
+      response.json({ ok: true, action: "unarchived", lead: updated });
+    } catch (error) {
+      next(error);
+    }
+  });
 
   // ——— GET /api/stats ———
   // Aggregate statistics for the dashboard

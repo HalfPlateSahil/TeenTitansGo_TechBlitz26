@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get In Touch — Invisible CRM</title>
+  <meta name="description" content="Tell us about your business needs and our team will get back to you with a tailored solution.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <div class="form-container" id="form-container">
+    <div class="form-card">
+
+      <!-- Header -->
+      <div class="form-header">
+        <div class="form-logo">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <h1 class="form-title">Get In Touch</h1>
+        <p class="form-subtitle">Tell us about your needs and we'll craft the perfect solution for you.</p>
+      </div>
+
+      <!-- Error Banner -->
+      <div class="error-banner" id="error-banner" role="alert"></div>
+
+      <!-- Form -->
+      <form id="lead-form" class="form-fields" novalidate>
+
+        <div class="field-group">
+          <label class="field-label" for="lead-name">Full Name <span class="required">*</span></label>
+          <input class="field-input" type="text" id="lead-name" name="name" placeholder="John Doe" autocomplete="name" required>
+          <div class="field-error" id="name-error">Please enter your name.</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label" for="lead-email">Email</label>
+            <input class="field-input" type="email" id="lead-email" name="email" placeholder="john@company.com" autocomplete="email">
+            <div class="field-error" id="email-error">Enter a valid email address.</div>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="lead-phone">Phone</label>
+            <input class="field-input" type="tel" id="lead-phone" name="phone" placeholder="+91 98765 43210" autocomplete="tel">
+            <div class="field-error" id="phone-error">Enter a valid phone number.</div>
+          </div>
+        </div>
+        <p class="field-hint" id="contact-hint">At least one contact method (email or phone) is required.</p>
+
+        <div class="field-group">
+          <label class="field-label" for="lead-company">Company</label>
+          <input class="field-input" type="text" id="lead-company" name="company" placeholder="Acme Inc." autocomplete="organization">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="lead-message">How can we help? <span class="required">*</span></label>
+          <textarea class="field-input" id="lead-message" name="message" placeholder="Tell us about your project, goals, or any questions you have…" rows="4" required></textarea>
+          <div class="field-error" id="message-error">Please describe how we can help.</div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submit-btn">
+          <span class="btn-text">Send Message</span>
+          <span class="spinner"></span>
+        </button>
+      </form>
+
+      <!-- Success State -->
+      <div class="success-state" id="success-state">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2 class="success-title" id="success-title">Thank you!</h2>
+        <p class="success-message" id="success-message">We've received your inquiry and will get back to you shortly.</p>
+        <button type="button" class="reset-btn" id="reset-btn">Submit Another</button>
+      </div>
+
+      <div class="form-footer">
+        Powered by <a href="#">Invisible CRM</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/script.js"></script>
+</body>
+</html>

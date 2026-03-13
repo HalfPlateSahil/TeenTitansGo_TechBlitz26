@@ -34,7 +34,10 @@ const envSchema = z.object({
   TWILIO_ACCOUNT_SID: z.string().optional().or(z.literal("")),
   TWILIO_AUTH_TOKEN: z.string().optional().or(z.literal("")),
   TWILIO_PHONE_NUMBER: z.string().optional().or(z.literal("")),
-  TWILIO_CALLS_ENABLED: z.coerce.boolean().default(false)
+  TWILIO_CALLS_ENABLED: z.coerce.boolean().default(false),
+  VIDEOSDK_TOKEN: z.string().optional().or(z.literal("")),
+  VIDEOSDK_GATEWAY_ID: z.string().optional().or(z.literal("")),
+  VIDEOSDK_CALLS_ENABLED: z.coerce.boolean().default(false)
 });
 
 const parsed = envSchema.parse(process.env);
@@ -70,7 +73,10 @@ export const env = {
   twilioAccountSid: parsed.TWILIO_ACCOUNT_SID || null,
   twilioAuthToken: parsed.TWILIO_AUTH_TOKEN || null,
   twilioPhoneNumber: parsed.TWILIO_PHONE_NUMBER || null,
-  twilioCallsEnabled: parsed.TWILIO_CALLS_ENABLED
+  twilioCallsEnabled: parsed.TWILIO_CALLS_ENABLED,
+  videoSdkToken: parsed.VIDEOSDK_TOKEN || null,
+  videoSdkGatewayId: parsed.VIDEOSDK_GATEWAY_ID || null,
+  videoSdkCallsEnabled: parsed.VIDEOSDK_CALLS_ENABLED
 } as const;
 
 export const hasSupabaseConfig = Boolean(env.supabaseUrl && env.supabaseServiceRoleKey);
@@ -78,3 +84,4 @@ export const hasSmtpConfig = Boolean(env.gmailSmtpUser && env.gmailSmtpPass);
 export const hasRedisConfig = Boolean(env.upstashRedisUrl);
 export const hasTelegramConfig = Boolean(env.telegramBotToken && env.telegramOwnerChatId);
 export const hasTwilioConfig = Boolean(env.twilioAccountSid && env.twilioAuthToken && env.twilioPhoneNumber && env.twilioCallsEnabled);
+export const hasVideoSdkConfig = Boolean(env.videoSdkToken && env.videoSdkGatewayId && env.videoSdkCallsEnabled);
